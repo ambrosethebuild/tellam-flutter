@@ -16,7 +16,9 @@ dependencies:
   dio: ^3.0.9
   cached_network_image: ^2.2.0+1
   rxdart: ^0.24.1
+  flutter_html: ^0.8.2
   firebase_database: ^3.1.6
+  url_launcher: ^5.4.11
 
 dev_dependencies:
   flutter_test:

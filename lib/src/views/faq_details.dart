@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tellam/src/database/models/faq.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/tellam.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FAQDetailsPage extends StatefulWidget {
   FAQDetailsPage({
@@ -33,9 +35,18 @@ class _FAQDetailsPageState extends State<FAQDetailsPage> {
           SizedBox(
             height: 20,
           ),
-          Text(
-            widget.faq.body,
-            style: TellamTextStyles.h5TitleTextStyle(),
+          Html(
+            data: widget.faq.body,
+            defaultTextStyle: TellamTextStyles.h5TitleTextStyle(),
+            renderNewlines: true,
+            onLinkTap: (url) async {
+              print("Opening $url...");
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
+            },
           ),
         ],
       ),
