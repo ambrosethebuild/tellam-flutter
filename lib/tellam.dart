@@ -15,6 +15,7 @@ class Tellam {
   static UIConfiguration uiConfiguration;
   static Config config;
   static AppDatabase appDatabase;
+  static bool showChat;
 
   //initialize with keys
   static initialize({
@@ -40,7 +41,13 @@ class Tellam {
   static Client client() => Client();
 
   //show the help/support page
-  static displayMessenger(BuildContext context) {
+  static show(
+    BuildContext context, {
+    bool enableChat = true,
+  }) {
+    //setting if the developer whats chat should be shown
+    showChat = enableChat;
+
     Navigator.push(
       context,
       MaterialPageRoute(

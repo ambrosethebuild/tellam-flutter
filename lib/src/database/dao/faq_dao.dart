@@ -9,6 +9,9 @@ abstract class FAQDao {
   @Query('SELECT * FROM faqs WHERE id = :id')
   Stream<FAQ> findById(int id);
 
+  @Query('SELECT * FROM faqs WHERE topicId = :topicId')
+  Stream<List<FAQ>> findByTopicId(int topicId);
+
   @Query('SELECT * FROM faqs ORDER BY id DESC')
   Stream<List<FAQ>> findAllStream();
 

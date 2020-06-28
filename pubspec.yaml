@@ -5,20 +5,20 @@ author:
 homepage:
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^0.5.7+3
   floor: ^0.12.0
   flutter_icons: ^1.0.0+1
-  dio: ^3.0.9
   cached_network_image: ^2.2.0+1
-  rxdart: ^0.24.1
   flutter_html: ^0.8.2
   firebase_database: ^3.1.6
   url_launcher: ^5.4.11
+  flutter_gradient_colors: ^1.0.0
+  flutter_svg: ^0.17.4
+  image_stack: ^1.1.0
 
 dev_dependencies:
   flutter_test:

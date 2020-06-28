@@ -5,7 +5,7 @@ import 'package:tellam/src/database/models/faq.dart';
 import 'package:tellam/src/database/models/faq_topic.dart';
 import 'package:tellam/tellam.dart';
 
-class FAQViewModel {
+class TellamHelpViewModel {
   //stream getters
   Stream<List<FAQ>> get faqs => Tellam.appDatabase.faqDao.findPopularStream();
   Stream<List<FAQTopic>> get faqTopics =>

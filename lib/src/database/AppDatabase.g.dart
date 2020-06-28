@@ -293,6 +293,12 @@ class _$FAQDao extends FAQDao {
   }
 
   @override
+  Stream<List<FAQ>> findByTopicId(int topicId) {
+    return _queryAdapter.queryListStream('SELECT * FROM faqs WHERE topicId = ?',
+        arguments: <dynamic>[topicId], tableName: 'faqs', mapper: _faqsMapper);
+  }
+
+  @override
   Stream<List<FAQ>> findAllStream() {
     return _queryAdapter.queryListStream('SELECT * FROM faqs ORDER BY id DESC',
         tableName: 'faqs', mapper: _faqsMapper);

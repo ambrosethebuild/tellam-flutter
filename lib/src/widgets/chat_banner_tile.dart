@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:tellam/src/constants/tellam_assets.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
+import 'package:tellam/src/views/conversation_page.dart';
+import 'package:tellam/src/widgets/oval_image.dart';
 import 'package:tellam/tellam.dart';
 
 class ChatBannerTile extends StatefulWidget {
@@ -27,35 +27,16 @@ class _ChatBannerTileState extends State<ChatBannerTile> {
         ),
       ),
       onPressed: () {
-        print("Chat");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConversationPage(),
+          ),
+        );
       },
       child: Row(
         children: <Widget>[
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl:
-                  "https://storage.googleapis.com/snaptask/system/App%20Icon.png",
-              progressIndicatorBuilder: (context, url, downloadProgress) {
-                return CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                );
-              },
-              errorWidget: (context, url, error) {
-                return Image(
-                  image: AssetImage(
-                    TellamAssets.defaultCompanyAvatarAsset,
-                    package: "tellam",
-                  ),
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.contain,
-                );
-              },
-              fit: BoxFit.cover,
-              width: 50,
-              height: 50,
-            ),
-          ),
+          OvalImage(),
           SizedBox(
             width: 20,
           ),
