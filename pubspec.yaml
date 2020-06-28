@@ -1,0 +1,31 @@
+name: tellam
+description: A new Flutter package project.
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^0.5.7+3
+  floor: ^0.12.0
+  flutter_icons: ^1.0.0+1
+  dio: ^3.0.9
+  cached_network_image: ^2.2.0+1
+  rxdart: ^0.24.1
+  firebase_database: ^3.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  floor_generator: ^0.12.0
+  build_runner: ^1.7.3
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
