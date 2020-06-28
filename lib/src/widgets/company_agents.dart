@@ -19,37 +19,38 @@ class _CompanyAgentsState extends State<CompanyAgents> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Agent>>(
-        stream: widget.tellamConversationViewModel.agents,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData && !snapshot.hasError) {
-            return SizedBox(
-              child: CircularProgressIndicator(),
-              height: 60,
-              width: 60,
-            );
-          }
-
-          final agents = snapshot.data;
-          double agentHeaderLeftPositioned = -45;
-
-          return Container(
+      stream: widget.tellamConversationViewModel.agents,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData && !snapshot.hasError) {
+          return SizedBox(
+            child: CircularProgressIndicator(),
             height: 60,
-            child: Stack(
-              children: agents.map(
-                (agent) {
-                  agentHeaderLeftPositioned += 45;
-                  return Positioned(
-                    left: agentHeaderLeftPositioned,
-                    child: OvalImage(
-                      height: 60,
-                      weight: 60,
-                      url: agent.photo,
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
+            width: 60,
           );
-        });
+        }
+
+        final agents = snapshot.data;
+        double agentHeaderLeftPositioned = -45;
+
+        return Container(
+          height: 60,
+          child: Stack(
+            children: agents.map(
+              (agent) {
+                agentHeaderLeftPositioned += 45;
+                return Positioned(
+                  left: agentHeaderLeftPositioned,
+                  child: OvalImage(
+                    height: 60,
+                    weight: 60,
+                    url: agent.photo,
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+        );
+      },
+    );
   }
 }

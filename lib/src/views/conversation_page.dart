@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tellam/src/database/models/company.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/src/view_models/tellam_conversation_view_model.dart';
 import 'package:tellam/src/widgets/chat_header.dart';
@@ -38,12 +39,11 @@ class _ConversationPageState extends State<ConversationPage> {
             left: 0,
             right: 0,
             height: MediaQuery.of(context).size.height * 0.40,
-            child: SvgPicture.network(
-              'https://storage.googleapis.com/tellam/Endless-Constellation.svg',
-              semanticsLabel: 'tellam',
-              fit: BoxFit.cover,
-              placeholderBuilder: (BuildContext context) {
-                return Container(
+            child: StreamBuilder<Company>(
+              stream: Tellam.appDatabase.companyDao.getCurrentCompanyStream(),
+              builder: (context, snapshot) {
+                //gradient background
+                final conversationBackground = Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -51,9 +51,21 @@ class _ConversationPageState extends State<ConversationPage> {
                       colors: GradientColors.teal,
                     ),
                   ),
-                  // child: Center(
-                  //   child: CircularProgressIndicator(),
-                  // ),
+                );
+
+                if (!snapshot.hasData ||
+                    snapshot.hasError ||
+                    snapshot.data.background.isEmpty) {
+                  return conversationBackground;
+                }
+
+                return SvgPicture.network(
+                  (snapshot.hasData) ? snapshot.data.background : '',
+                  semanticsLabel: 'tellam',
+                  fit: BoxFit.cover,
+                  placeholderBuilder: (BuildContext context) {
+                    return conversationBackground;
+                  },
                 );
               },
             ),
@@ -84,11 +96,19 @@ class _ConversationPageState extends State<ConversationPage> {
                   height: 10,
                 ),
                 //Company intro
-                Text(
-                  "How can we help you today?",
-                  style: TellamTextStyles.h5TitleTextStyle(
-                    color: Colors.white,
-                  ),
+                StreamBuilder<Company>(
+                  stream:
+                      Tellam.appDatabase.companyDao.getCurrentCompanyStream(),
+                  builder: (context, snapshot) {
+                    return Text(
+                      (snapshot.hasData)
+                          ? snapshot.data.chatIntro
+                          : "How can we help you today?",
+                      style: TellamTextStyles.h5TitleTextStyle(
+                        color: Colors.white,
+                      ),
+                    );
+                  },
                 ),
 
                 SizedBox(

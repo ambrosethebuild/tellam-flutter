@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tellam/src/database/models/company.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/src/widgets/oval_image.dart';
+import 'package:tellam/tellam.dart';
 
 class ChatHeader extends StatefulWidget {
   ChatHeader({Key key}) : super(key: key);
@@ -16,9 +18,15 @@ class _ChatHeaderState extends State<ChatHeader> {
       padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Row(
         children: <Widget>[
-          OvalImage(
-            height: 30,
-            weight: 30,
+          StreamBuilder<Company>(
+            stream: Tellam.appDatabase.companyDao.getCurrentCompanyStream(),
+            builder: (context, snapshot) {
+              return OvalImage(
+                url: (snapshot.hasData) ? snapshot.data.photo : "",
+                height: 30,
+                weight: 30,
+              );
+            },
           ),
           SizedBox(
             width: 20,
