@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_stack/image_stack.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
+import 'package:tellam/src/view_models/tellam_conversation_view_model.dart';
 import 'package:tellam/src/widgets/chat_header.dart';
-import 'package:tellam/src/widgets/oval_image.dart';
+import 'package:tellam/src/widgets/company_agents.dart';
 import 'package:tellam/src/widgets/conversation_appbar.dart';
+import 'package:tellam/src/widgets/powered_by.dart';
+import 'package:tellam/tellam.dart';
 
 class ConversationPage extends StatefulWidget {
   ConversationPage({Key key}) : super(key: key);
@@ -15,29 +17,14 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
-  //Agents images
-  List<String> agents = [];
-
-  double agentHeaderRightPositioned = -45;
+  //TellamConversationViewModel Instance
+  TellamConversationViewModel _tellamConversationViewModel =
+      TellamConversationViewModel();
 
   @override
   void initState() {
     super.initState();
-
-    agents.add(
-        "https://images.unsplash.com/photo-1458071103673-6a6e4c4a3413?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1473700216830-7e08d47f858e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1470406852800-b97e5d92e2aa?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1473700216830-7e08d47f858e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=80");
-    agents.add(
-        "https://images.unsplash.com/photo-1473700216830-7e08d47f858e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80");
+    _tellamConversationViewModel.init();
   }
 
   @override
@@ -111,114 +98,90 @@ class _ConversationPageState extends State<ConversationPage> {
 
                 Card(
                   elevation: 4,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
-                    ),
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: <Widget>[
-                        Text(
-                          "Your conversations",
-                          style: TellamTextStyles.h5TitleTextStyle(),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Typically replies in a few hours",
-                          style: TellamTextStyles.h6TitleTextStyle(),
-                        ),
+                  child: ListView(
+                    padding: EdgeInsets.all(20),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: <Widget>[
+                      Text(
+                        "Your conversation(s)",
+                        style: TellamTextStyles.h5TitleTextStyle(),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Typically replies in a few hours",
+                        style: TellamTextStyles.h6TitleTextStyle(),
+                      ),
 
-                        //company agents
-                        SizedBox(
-                          height: 10,
-                        ),
+                      //company agents
+                      SizedBox(
+                        height: 10,
+                      ),
 
-                        Container(
-                          height: 60,
-                          child: Stack(
-                            children: agents.map(
-                              (agentUrl) {
-                                agentHeaderRightPositioned += 45;
-                                return Positioned(
-                                  right: agentHeaderRightPositioned,
-                                  child: OvalImage(
-                                    height: 60,
-                                    weight: 60,
-                                    url: agentUrl,
-                                  ),
-                                );
-                              },
-                            ).toList(),
+                      CompanyAgents(
+                        tellamConversationViewModel:
+                            _tellamConversationViewModel,
+                      ),
+                      //recent conversations
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Recent conversations",
+                        style: TellamTextStyles.h5TitleTextStyle(),
+                      ),
+                      //list of recent conversations
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ListView.separated(
+                        padding: EdgeInsets.all(0),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return ChatHeader();
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            thickness: 1,
+                          );
+                        },
+                      ),
+
+                      //new conversation button
+                      SizedBox(
+                        height: 10,
+                      ),
+                      RaisedButton.icon(
+                        padding: EdgeInsets.all(10),
+                        color: Tellam.uiConfiguration.buttonColor,
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          side: BorderSide(
+                            color: Tellam.uiConfiguration.buttonColor,
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
+                        onPressed: () {
+                          print("New conversation");
+                        },
+                        icon: Icon(
+                          Icons.send,
                         ),
-                        Container(
-                          height: 60,
-                          child: ListView(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              OvalImage(
-                                height: 60,
-                                weight: 60,
-                              ),
-                              OvalImage(
-                                height: 60,
-                                weight: 60,
-                              ),
-                              OvalImage(
-                                height: 60,
-                                weight: 60,
-                              ),
-                              OvalImage(
-                                height: 60,
-                                weight: 60,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        //recent conversations
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Recent conversations",
-                          style: TellamTextStyles.h5TitleTextStyle(),
-                        ),
-                        //list of recent conversations
-                        /*
-                        ListView(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: <Widget>[
-                            ChatHeader(),
-                            ChatHeader(),
-                            ChatHeader(),
-                          ],
-                        ),
-                        */
-
-                        //new conversation button
-                        RaisedButton.icon(
-                          onPressed: () {
-                            print("New conversation");
-                          },
-                          icon: Icon(
-                            Icons.send,
-                          ),
-                          label: Text("New Conversation"),
-                        ),
-                      ],
-                    ),
+                        label: Text("New Conversation"),
+                      ),
+                    ],
                   ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                PoweredBy(),
+                SizedBox(
+                  height: 30,
                 ),
               ],
             ),

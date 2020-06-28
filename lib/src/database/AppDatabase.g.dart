@@ -66,6 +66,8 @@ class _$AppDatabase extends AppDatabase {
 
   FAQTopicDao _faqTopicDaoInstance;
 
+  CompanyDao _companyDaoInstance;
+
   DataUpdateDao _dataUpdateDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
@@ -94,6 +96,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `faq_topics` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `topicId` INTEGER, `title` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `updates` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `model` TEXT, `timestamp` TEXT)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `companies` (`name` TEXT, `photo` TEXT, `background` TEXT, `chatIntro` TEXT, `description` TEXT, PRIMARY KEY (`name`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -113,6 +117,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   FAQTopicDao get faqTopicDao {
     return _faqTopicDaoInstance ??= _$FAQTopicDao(database, changeListener);
+  }
+
+  @override
+  CompanyDao get companyDao {
+    return _companyDaoInstance ??= _$CompanyDao(database, changeListener);
   }
 
   @override
@@ -197,10 +206,8 @@ class _$UserDao extends UserDao {
 
   @override
   Stream<TellamUser> getCurrentUserStream() {
-    return _queryAdapter.queryStream(
-        'SELECT * FROM users WHERE token IS NOT NULL LIMIT 1',
-        tableName: 'users',
-        mapper: _usersMapper);
+    return _queryAdapter.queryStream('SELECT * FROM users LIMIT 1',
+        tableName: 'users', mapper: _usersMapper);
   }
 
   @override
@@ -463,6 +470,99 @@ class _$FAQTopicDao extends FAQTopicDao {
         await transactionDatabase.faqTopicDao.replaceFAQTopics(faqTopics);
       });
     }
+  }
+}
+
+class _$CompanyDao extends CompanyDao {
+  _$CompanyDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database, changeListener),
+        _companyInsertionAdapter = InsertionAdapter(
+            database,
+            'companies',
+            (Company item) => <String, dynamic>{
+                  'name': item.name,
+                  'photo': item.photo,
+                  'background': item.background,
+                  'chatIntro': item.chatIntro,
+                  'description': item.description
+                },
+            changeListener),
+        _companyUpdateAdapter = UpdateAdapter(
+            database,
+            'companies',
+            ['name'],
+            (Company item) => <String, dynamic>{
+                  'name': item.name,
+                  'photo': item.photo,
+                  'background': item.background,
+                  'chatIntro': item.chatIntro,
+                  'description': item.description
+                },
+            changeListener),
+        _companyDeletionAdapter = DeletionAdapter(
+            database,
+            'companies',
+            ['name'],
+            (Company item) => <String, dynamic>{
+                  'name': item.name,
+                  'photo': item.photo,
+                  'background': item.background,
+                  'chatIntro': item.chatIntro,
+                  'description': item.description
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _companiesMapper = (Map<String, dynamic> row) => Company(
+      name: row['name'] as String,
+      photo: row['photo'] as String,
+      background: row['background'] as String,
+      chatIntro: row['chatIntro'] as String,
+      description: row['description'] as String);
+
+  final InsertionAdapter<Company> _companyInsertionAdapter;
+
+  final UpdateAdapter<Company> _companyUpdateAdapter;
+
+  final DeletionAdapter<Company> _companyDeletionAdapter;
+
+  @override
+  Future<Company> getCurrentCompany() async {
+    return _queryAdapter.query('SELECT * FROM companies LIMIT 1',
+        mapper: _companiesMapper);
+  }
+
+  @override
+  Stream<Company> getCurrentCompanyStream() {
+    return _queryAdapter.queryStream('SELECT * FROM companies LIMIT 1',
+        tableName: 'companies', mapper: _companiesMapper);
+  }
+
+  @override
+  Future<void> deleteAllCompanies() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM companies');
+  }
+
+  @override
+  Future<void> insertCompany(Company company) async {
+    await _companyInsertionAdapter.insert(
+        company, sqflite.ConflictAlgorithm.abort);
+  }
+
+  @override
+  Future<void> updateCompany(Company company) async {
+    await _companyUpdateAdapter.update(
+        company, sqflite.ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<void> deleteCompany(Company company) async {
+    await _companyDeletionAdapter.delete(company);
   }
 }
 

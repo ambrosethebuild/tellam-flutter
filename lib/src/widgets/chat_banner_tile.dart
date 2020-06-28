@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tellam/src/database/models/company.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/src/views/conversation_page.dart';
 import 'package:tellam/src/widgets/oval_image.dart';
@@ -36,7 +37,14 @@ class _ChatBannerTileState extends State<ChatBannerTile> {
       },
       child: Row(
         children: <Widget>[
-          OvalImage(),
+          StreamBuilder<Company>(
+            stream: Tellam.appDatabase.companyDao.getCurrentCompanyStream(),
+            builder: (context, snapshot) {
+              return OvalImage(
+                url: (snapshot.hasData) ? snapshot.data.photo : "",
+              );
+            },
+          ),
           SizedBox(
             width: 20,
           ),
@@ -53,9 +61,17 @@ class _ChatBannerTileState extends State<ChatBannerTile> {
                 SizedBox(
                   height: 5,
                 ),
-                Text(
-                  "Chat with us about your problem",
-                  style: TellamTextStyles.h5TitleTextStyle(),
+                StreamBuilder<Company>(
+                  stream:
+                      Tellam.appDatabase.companyDao.getCurrentCompanyStream(),
+                  builder: (context, snapshot) {
+                    return Text(
+                      (snapshot.hasData)
+                          ? snapshot.data.chatIntro
+                          : "Chat with us about your problem",
+                      style: TellamTextStyles.h5TitleTextStyle(),
+                    );
+                  },
                 ),
               ],
             ),

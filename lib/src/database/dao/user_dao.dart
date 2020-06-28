@@ -9,7 +9,7 @@ abstract class UserDao {
   @Query('SELECT * FROM users WHERE id = :id')
   Stream<TellamUser> findUserById(int id);
 
-  @Query('SELECT * FROM users WHERE token IS NOT NULL LIMIT 1')
+  @Query('SELECT * FROM users LIMIT 1')
   Stream<TellamUser> getCurrentUserStream();
 
   @insert

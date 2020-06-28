@@ -18,8 +18,7 @@ class OvalImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: CachedNetworkImage(
-        imageUrl: this.url ??
-            "https://storage.googleapis.com/snaptask/system/App%20Icon.png",
+        imageUrl: this.url,
         progressIndicatorBuilder: (context, url, downloadProgress) {
           return CircularProgressIndicator(
             value: downloadProgress.progress,

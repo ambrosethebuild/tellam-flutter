@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:tellam/tellam.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Tellam.initialize(
     secretKey: "",
-    databaseUrl: "https://cart-278313.firebaseio.com/",
+    databaseUrl: "https://tellam-6ee8e.firebaseio.com/",
   );
 
   runApp(MyApp());
@@ -45,7 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Text("Tellam Inc."),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Tellam.show(context);
+        },
         tooltip: 'Help',
         child: Icon(Icons.chat),
       ), // This trailing comma makes auto-formatting nicer for build methods.

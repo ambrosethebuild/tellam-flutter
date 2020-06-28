@@ -13,6 +13,7 @@ class _ChatHeaderState extends State<ChatHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Row(
         children: <Widget>[
           OvalImage(
@@ -22,8 +23,9 @@ class _ChatHeaderState extends State<ChatHeader> {
           SizedBox(
             width: 20,
           ),
-          Flexible(
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(

@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tellam/src/database/models/company.dart';
 import 'package:tellam/src/database/models/data_update.dart';
 import 'package:tellam/src/database/models/faq.dart';
 import 'package:tellam/src/database/models/faq_topic.dart';
@@ -16,7 +17,6 @@ class TellamHelpViewModel {
 
   //check if faq/faqtopics need to be updated
   void init() async {
-    print("Database URL ===> ${Tellam.config.databaseUrl}");
     tellamDatabaseReference = FirebaseDatabase(
       databaseURL: Tellam.config.databaseUrl,
     ).reference();
@@ -35,6 +35,11 @@ class TellamHelpViewModel {
 
       //update the faq topics
       await updateFAQTopics(
+        updateTimestamp: updateTimestamp,
+      );
+
+      //update company info
+      await updateCompanyInfo(
         updateTimestamp: updateTimestamp,
       );
     } else {
@@ -154,6 +159,53 @@ class TellamHelpViewModel {
       //prepare faq data update model
       final dataUpdate = DataUpdate(
         model: "faq_topics",
+        timestamp: updateTimestamp.toString(),
+      );
+
+      //saving the faq data update timestamp
+      Tellam.appDatabase.dataUpdateDao.insertDataUpdate(
+        dataUpdate,
+      );
+    }
+
+    return success;
+  }
+
+  //fetch comapny info from firebase and save to local database
+  Future<bool> updateCompanyInfo({@required int updateTimestamp}) async {
+    bool success;
+    Company company;
+
+    //fetch faqs from firebase database
+    await tellamDatabaseReference.child("company").once().then(
+      (dataSnapshot) {
+        print("Company ==> ${dataSnapshot.value}");
+        //convert the value to map/array
+        final companyObject = dataSnapshot.value;
+        company = Company(
+          name: companyObject["name"],
+          description: companyObject["description"],
+          background: companyObject["background"],
+          photo: companyObject["photo"],
+          chatIntro: companyObject["chat_intro"],
+        );
+        success = true;
+      },
+      onError: (error) {
+        print("Error getting company info ==> $error");
+        success = false;
+      },
+    );
+
+    if (success) {
+      //saving the faq models
+      Tellam.appDatabase.companyDao.insertCompany(
+        company,
+      );
+
+      //prepare faq data update model
+      final dataUpdate = DataUpdate(
+        model: "companies",
         timestamp: updateTimestamp.toString(),
       );
 
