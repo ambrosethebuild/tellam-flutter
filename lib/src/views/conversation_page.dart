@@ -10,7 +10,6 @@ import 'package:tellam/src/views/chat_page.dart';
 import 'package:tellam/src/widgets/chat_header.dart';
 import 'package:tellam/src/widgets/company_agents.dart';
 import 'package:tellam/src/widgets/conversation_appbar.dart';
-import 'package:tellam/src/widgets/data_loading_indicator.dart';
 import 'package:tellam/src/widgets/page_view_state.dart';
 import 'package:tellam/src/widgets/powered_by.dart';
 import 'package:tellam/tellam.dart';
