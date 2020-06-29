@@ -2,8 +2,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tellam/src/database/models/agent.dart';
 import 'package:tellam/src/database/models/company.dart';
-import 'package:tellam/src/database/models/message.dart';
+import 'package:tellam/src/database/models/conversation.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
+import 'package:tellam/src/views/chat_page.dart';
 import 'package:tellam/src/widgets/oval_image.dart';
 import 'package:tellam/tellam.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -11,12 +12,10 @@ import 'package:timeago/timeago.dart' as timeago;
 class ChatHeader extends StatefulWidget {
   ChatHeader({
     Key key,
-    this.message,
-    this.agentId,
+    this.conversation,
   }) : super(key: key);
 
-  final Message message;
-  final int agentId;
+  final Conversation conversation;
 
   @override
   _ChatHeaderState createState() => _ChatHeaderState();
@@ -27,14 +26,21 @@ class _ChatHeaderState extends State<ChatHeader> {
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () {
-        print("Open Conversation");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              conversation: widget.conversation,
+            ),
+          ),
+        );
       },
       padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Row(
         children: <Widget>[
           StreamBuilder<Event>(
             stream: Tellam.tellamDatabaseReference
-                .child("agents/${widget.agentId}")
+                .child("agents/${widget.conversation.agentId}")
                 .onValue,
             builder: (context, event) {
               // final agentSnapshotValue = event.data.snapshot.value;
@@ -85,7 +91,7 @@ class _ChatHeaderState extends State<ChatHeader> {
                 //listening to agent assigned to this conversation
                 StreamBuilder<Event>(
                   stream: Tellam.tellamDatabaseReference
-                      .child("agents/${widget.agentId}")
+                      .child("agents/${widget.conversation.agentId}")
                       .onValue,
                   builder: (context, event) {
                     // final agentSnapshotValue = event.data.snapshot.value;
@@ -124,7 +130,11 @@ class _ChatHeaderState extends State<ChatHeader> {
                   },
                 ),
                 Text(
-                  widget.message.message,
+                  widget
+                      .conversation
+                      .messages[widget.conversation.messages.length - 1]
+                      // .messages[0]
+                      .message,
                   style: TellamTextStyles.h5TitleTextStyle(),
                 ),
               ],
@@ -136,7 +146,12 @@ class _ChatHeaderState extends State<ChatHeader> {
           Text(
             timeago.format(
               DateTime.fromMillisecondsSinceEpoch(
-                widget.message.timestamp.toInt() * 1000,
+                widget
+                        .conversation
+                        .messages[widget.conversation.messages.length - 1]
+                        .timestamp
+                        .toInt() *
+                    1000,
               ),
               locale: 'en_short',
             ),

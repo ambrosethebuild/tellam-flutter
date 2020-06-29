@@ -2,7 +2,7 @@ class Message {
   int isAgent;
   int read;
   String message;
-  double timestamp;
+  int timestamp;
 
   Message({
     this.isAgent,

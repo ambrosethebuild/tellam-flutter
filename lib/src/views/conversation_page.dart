@@ -220,8 +220,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                         a.timestamp.compareTo(b.timestamp),
                                   );
                                   return ChatHeader(
-                                    message: messages[messages.length - 1],
-                                    agentId: conversation.agentId,
+                                    conversation: conversation,
                                   );
                                 },
                                 separatorBuilder: (context, index) {

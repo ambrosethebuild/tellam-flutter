@@ -73,53 +73,49 @@ class TellamConversationViewModel {
         .orderByChild("user_id")
         .equalTo(currentTellamUser.id)
         .limitToLast(5)
-        // .onChildAdded
         .onChildChanged
         .listen(
       (event) {
-        print("Change  Recents ==> ${event.snapshot.value}");
-        //conversation object from firebase
-        final conversationObject = event.snapshot.value;
-        //load basic info
-        final mConversation = Conversation(
-          key: event.snapshot.key,
-          agentId: conversationObject["agent_id"],
-          userId: conversationObject["user_id"],
-          isAssigned: conversationObject["is_assigned"],
-          isClosed: (conversationObject["is_closed"] != null &&
-                  conversationObject["is_closed"] == 1)
-              ? true
-              : false,
-          messages: [],
-        );
+        //check if messages is available in the conversation
+        if (event.snapshot.value["messages"] != null) {
+          //conversation object from firebase
+          final conversationObject = event.snapshot.value;
+          //load basic info
+          final mConversation = Conversation(
+            key: event.snapshot.key,
+            agentId: conversationObject["agent_id"],
+            userId: conversationObject["user_id"],
+            isAssigned: conversationObject["is_assigned"],
+            isClosed: conversationObject["is_closed"] ?? false,
+            messages: [],
+          );
 
-        //Load conversation messages
-        Map<String, dynamic> conversationMessages =
-            Map.from(event.snapshot.value["messages"]);
-        conversationMessages.values.forEach(
-          (messageObject) {
-            final mMessage = Message(
-              isAgent: messageObject["is_agent"],
-              read: messageObject["read"],
-              message: messageObject["message"],
-              timestamp: double.parse(
-                messageObject["timestamp"].toString(),
-              ),
-            );
-            mConversation.messages.add(mMessage);
-          },
-        );
+          //Load conversation messages
+          Map<String, dynamic> conversationMessages =
+              Map.from(event.snapshot.value["messages"]);
+          conversationMessages.values.forEach(
+            (messageObject) {
+              final mMessage = Message(
+                isAgent: messageObject["is_agent"],
+                read: messageObject["read"],
+                message: messageObject["message"],
+                timestamp: messageObject["timestamp"],
+              );
+              mConversation.messages.add(mMessage);
+            },
+          );
 
-        final mConversations = _recentConversations.value ?? [];
-        final updateIndex = mConversations.indexWhere(
-            (conversation) => conversation.key == mConversation.key);
-        if (updateIndex >= 0) {
-          mConversations.removeAt(updateIndex);
-          mConversations.insert(updateIndex, mConversation);
-        } else {
-          mConversations.add(mConversation);
+          final mConversations = _recentConversations.value ?? [];
+          final updateIndex = mConversations.indexWhere(
+              (conversation) => conversation.key == mConversation.key);
+          if (updateIndex >= 0) {
+            mConversations.removeAt(updateIndex);
+            mConversations.insert(updateIndex, mConversation);
+          } else {
+            mConversations.add(mConversation);
+          }
+          _recentConversations.add(mConversations);
         }
-        _recentConversations.add(mConversations);
       },
       onError: (errorSnapshot) {
         print("Error Snapshot ===> $errorSnapshot");
@@ -137,46 +133,50 @@ class TellamConversationViewModel {
         .onChildAdded
         .listen(
       (event) {
-        //conversation object from firebase
-        final conversationObject = event.snapshot.value;
-        //load basic info
-        final conversation = Conversation(
-          key: event.snapshot.key,
-          agentId: conversationObject["agent_id"],
-          userId: conversationObject["user_id"],
-          isAssigned: conversationObject["is_assigned"],
-          isClosed: (conversationObject["is_closed"] != null &&
-                  conversationObject["is_closed"] == 1)
-              ? true
-              : false,
-          messages: [],
-        );
-
-        //Load conversation messages
-        Map<String, dynamic> conversationMessages =
-            Map.from(event.snapshot.value["messages"]);
-        conversationMessages.values.forEach(
-          (messageObject) {
-            final mMessage = Message(
-              isAgent: messageObject["is_agent"],
-              read: messageObject["read"],
-              message: messageObject["message"],
-              timestamp: double.parse(
-                messageObject["timestamp"].toString(),
-              ),
-            );
-            conversation.messages.add(mMessage);
-          },
-        );
-
-        final mConversations = _recentConversations.value ?? [];
-        mConversations.add(conversation);
-        _recentConversations.add(mConversations);
+        //only read conversation that contains messages
+        if (event.snapshot.value["messages"] != null) {
+          parseConversationToStream(event.snapshot);
+        }
       },
       onError: (errorSnapshot) {
         print("Error Snapshot ===> $errorSnapshot");
         _recentConversations.addError(errorSnapshot);
       },
     );
+  }
+
+  //convert the conversation data from firebase object to mdoel
+  //then add it to the stream
+  void parseConversationToStream(DataSnapshot snapshot) {
+    //conversation object from firebase
+    final conversationObject = snapshot.value;
+    //load basic info
+    final conversation = Conversation(
+      key: snapshot.key,
+      agentId: conversationObject["agent_id"],
+      userId: conversationObject["user_id"],
+      isAssigned: conversationObject["is_assigned"],
+      isClosed: conversationObject["is_closed"] ?? false,
+      messages: [],
+    );
+
+    //Load conversation messages
+    Map<String, dynamic> conversationMessages =
+        Map.from(snapshot.value["messages"]);
+    conversationMessages.values.forEach(
+      (messageObject) {
+        final mMessage = Message(
+          isAgent: messageObject["is_agent"],
+          read: messageObject["read"],
+          message: messageObject["message"],
+          timestamp: messageObject["timestamp"],
+        );
+        conversation.messages.add(mMessage);
+      },
+    );
+
+    final mConversations = _recentConversations.value ?? [];
+    mConversations.add(conversation);
+    _recentConversations.add(mConversations);
   }
 }
