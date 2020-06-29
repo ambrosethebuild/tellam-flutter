@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 2020-06-29
 
-* TODO: Describe initial release.
+* Tellam flutter package to integrate FAQ and live support chat using firebase.

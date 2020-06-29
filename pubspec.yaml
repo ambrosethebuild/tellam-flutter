@@ -1,8 +1,8 @@
 name: tellam
-description: A new Flutter package project.
+description: Tellam flutter package to integrate FAQ and live support chat using firebase.
 version: 0.0.1
-author:
-homepage:
+author: Ambrose Bako<bakoambrose@gmail.com>
+homepage: https://github.com/ambrosethebuild/tellam-flutter
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
