@@ -4,16 +4,19 @@ import 'package:tellam/tellam.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  //initialize tellam with firebase database url
   await Tellam.initialize(
-    secretKey: "",
     databaseUrl: "https://tellam-6ee8e.firebaseio.com/",
   );
 
+  //setting the user data
   TellamUser tellamUser = TellamUser(
     id: 6,
     firstName: "Ambrose",
     lastName: "Bako",
   );
+
+  //register user data
   Tellam.client().register(tellamUser);
 
   runApp(MyApp());
@@ -55,7 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Tellam.show(context);
+          //display tellam faq and live chat if needed
+          Tellam.show(
+            context,
+            enableChat: true,
+          );
         },
         tooltip: 'Help',
         child: Icon(Icons.chat),

@@ -21,7 +21,7 @@ class Tellam {
 
   //initialize with keys
   static initialize({
-    @required String secretKey,
+    String secretKey = "",
     @required String databaseUrl,
     UIConfiguration uiconfiguration,
   }) async {
