@@ -6,10 +6,17 @@ class Client {
   Future<bool> register(TellamUser tellamUser) async {
     bool success;
     try {
-      Tellam.appDatabase.userDao.insertUser(tellamUser);
+      Tellam.appDatabase.userDao.replaceUser(tellamUser);
+      Tellam.tellamDatabaseReference
+          .child(
+            "users/${tellamUser.id}",
+          )
+          .set(
+            tellamUser.getMappedObject(),
+          );
       success = true;
     } catch (error) {
-      print("Error Occurred while saving tellam user data");
+      print("Error Occurred while saving tellam user data $error");
       success = false;
     }
     return success;

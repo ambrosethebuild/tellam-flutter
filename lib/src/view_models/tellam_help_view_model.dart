@@ -12,12 +12,9 @@ class TellamHelpViewModel {
   Stream<List<FAQTopic>> get faqTopics =>
       Tellam.appDatabase.faqTopicDao.findAllStream();
 
-  //tellam database reference
-  DatabaseReference tellamDatabaseReference;
-
   //check if faq/faqtopics need to be updated
   void init() async {
-    tellamDatabaseReference = FirebaseDatabase(
+    Tellam.tellamDatabaseReference = FirebaseDatabase(
       databaseURL: Tellam.config.databaseUrl,
     ).reference();
 
@@ -53,7 +50,7 @@ class TellamHelpViewModel {
   Future<int> firebaseUpdateTimestamp() async {
     int updateTimestamp = 0;
     //listen to timestamp update on the server
-    await tellamDatabaseReference.child("update_timestamp").once().then(
+    await Tellam.tellamDatabaseReference.child("update_timestamp").once().then(
       (dataSnapshot) {
         updateTimestamp = dataSnapshot.value;
       },
@@ -70,7 +67,7 @@ class TellamHelpViewModel {
     List<FAQ> faqs = [];
 
     //fetch faqs from firebase database
-    await tellamDatabaseReference.child("faqs").once().then(
+    await Tellam.tellamDatabaseReference.child("faqs").once().then(
       (dataSnapshot) {
         //convert the value to map/array
         Map<String, dynamic> faqsArray = Map.from(dataSnapshot.value);
@@ -124,9 +121,9 @@ class TellamHelpViewModel {
     List<FAQTopic> faqTopics = [];
 
     //fetch faqs from firebase database
-    await tellamDatabaseReference.child("faqs-topics").once().then(
+    await Tellam.tellamDatabaseReference.child("faqs-topics").once().then(
       (dataSnapshot) {
-        print("FAQ Topics ==> ${dataSnapshot.value}");
+        // print("FAQ Topics ==> ${dataSnapshot.value}");
         //convert the value to map/array
         List<dynamic> faqTopicsArray = dataSnapshot.value;
         faqTopicsArray.forEach(
@@ -177,9 +174,9 @@ class TellamHelpViewModel {
     Company company;
 
     //fetch faqs from firebase database
-    await tellamDatabaseReference.child("company").once().then(
+    await Tellam.tellamDatabaseReference.child("company").once().then(
       (dataSnapshot) {
-        print("Company ==> ${dataSnapshot.value}");
+        // print("Company ==> ${dataSnapshot.value}");
         //convert the value to map/array
         final companyObject = dataSnapshot.value;
         company = Company(
@@ -187,6 +184,7 @@ class TellamHelpViewModel {
           description: companyObject["description"],
           background: companyObject["background"],
           photo: companyObject["photo"],
+          replyTime: companyObject["reply_time"],
           chatIntro: companyObject["chat_intro"],
         );
         success = true;
@@ -199,7 +197,7 @@ class TellamHelpViewModel {
 
     if (success) {
       //saving the faq models
-      Tellam.appDatabase.companyDao.insertCompany(
+      Tellam.appDatabase.companyDao.replaceCompany(
         company,
       );
 

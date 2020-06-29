@@ -19,4 +19,16 @@ class TellamUser {
     this.phoneNumber = "",
     this.photo = "",
   });
+
+  @ignore
+  dynamic getMappedObject() {
+    return {
+      "id": this.id,
+      "first_name": this.firstName,
+      "last_name": this.lastName ?? "",
+      "email": this.emailAddress ?? "",
+      "phone": this.phoneNumber ?? "",
+      "photo": this.photo ?? "",
+    };
+  }
 }

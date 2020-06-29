@@ -23,26 +23,28 @@ class _CompanyAgentsState extends State<CompanyAgents> {
       builder: (context, snapshot) {
         if (!snapshot.hasData && !snapshot.hasError) {
           return SizedBox(
-            child: CircularProgressIndicator(),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
             height: 60,
             width: 60,
           );
         }
 
         final agents = snapshot.data;
-        double agentHeaderLeftPositioned = -45;
+        double agentHeaderLeftPositioned = -40;
 
         return Container(
-          height: 60,
+          height: 50,
           child: Stack(
             children: agents.map(
               (agent) {
-                agentHeaderLeftPositioned += 45;
+                agentHeaderLeftPositioned += 40;
                 return Positioned(
                   left: agentHeaderLeftPositioned,
                   child: OvalImage(
-                    height: 60,
-                    weight: 60,
+                    height: 50,
+                    weight: 50,
                     url: agent.photo,
                   ),
                 );

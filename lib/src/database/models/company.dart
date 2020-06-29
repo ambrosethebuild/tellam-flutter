@@ -7,6 +7,7 @@ class Company {
   String photo;
   String background;
   String chatIntro;
+  String replyTime;
   String description;
 
   Company({
@@ -14,6 +15,7 @@ class Company {
     this.photo,
     this.background,
     this.chatIntro,
+    this.replyTime,
     this.description,
   });
 }

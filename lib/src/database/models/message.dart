@@ -1,8 +1,8 @@
 class Message {
   int isAgent;
   int read;
-  int message;
-  int timestamp;
+  String message;
+  double timestamp;
 
   Message({
     this.isAgent,

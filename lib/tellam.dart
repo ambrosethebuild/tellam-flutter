@@ -3,6 +3,7 @@ library tellam;
 export 'package:tellam/src/database/models/tellam_user.dart';
 export 'package:tellam/src/utils/ui_configuration.dart';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tellam/src/database/AppDatabase.dart';
 import 'package:tellam/src/database/AppDatabaseSingleton.dart';
@@ -16,6 +17,7 @@ class Tellam {
   static Config config;
   static AppDatabase appDatabase;
   static bool showChat;
+  static DatabaseReference tellamDatabaseReference;
 
   //initialize with keys
   static initialize({
@@ -29,6 +31,11 @@ class Tellam {
       databaseUrl: databaseUrl,
     );
     uiConfiguration = uiconfiguration ?? UIConfiguration();
+
+    //firebase database refrence
+    tellamDatabaseReference = FirebaseDatabase(
+      databaseURL: config.databaseUrl,
+    ).reference();
 
     //prepare database
     appDatabase = await AppDatabaseSingleton().database;

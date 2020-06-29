@@ -4,10 +4,17 @@ import 'package:tellam/tellam.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Tellam.initialize(
+  await Tellam.initialize(
     secretKey: "",
     databaseUrl: "https://tellam-6ee8e.firebaseio.com/",
   );
+
+  TellamUser tellamUser = TellamUser(
+    id: 6,
+    firstName: "Ambrose",
+    lastName: "Bako",
+  );
+  Tellam.client().register(tellamUser);
 
   runApp(MyApp());
 }

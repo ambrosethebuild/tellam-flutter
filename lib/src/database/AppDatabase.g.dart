@@ -97,7 +97,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `updates` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `model` TEXT, `timestamp` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `companies` (`name` TEXT, `photo` TEXT, `background` TEXT, `chatIntro` TEXT, `description` TEXT, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `companies` (`name` TEXT, `photo` TEXT, `background` TEXT, `chatIntro` TEXT, `replyTime` TEXT, `description` TEXT, PRIMARY KEY (`name`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -218,7 +218,7 @@ class _$UserDao extends UserDao {
   @override
   Future<void> insertUser(TellamUser user) async {
     await _tellamUserInsertionAdapter.insert(
-        user, sqflite.ConflictAlgorithm.abort);
+        user, sqflite.ConflictAlgorithm.replace);
   }
 
   @override
@@ -230,6 +230,20 @@ class _$UserDao extends UserDao {
   @override
   Future<void> deleteUser(TellamUser user) async {
     await _tellamUserDeletionAdapter.delete(user);
+  }
+
+  @override
+  Future<void> replaceUser(TellamUser user) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceUser(user);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.userDao.replaceUser(user);
+      });
+    }
   }
 }
 
@@ -484,6 +498,7 @@ class _$CompanyDao extends CompanyDao {
                   'photo': item.photo,
                   'background': item.background,
                   'chatIntro': item.chatIntro,
+                  'replyTime': item.replyTime,
                   'description': item.description
                 },
             changeListener),
@@ -496,6 +511,7 @@ class _$CompanyDao extends CompanyDao {
                   'photo': item.photo,
                   'background': item.background,
                   'chatIntro': item.chatIntro,
+                  'replyTime': item.replyTime,
                   'description': item.description
                 },
             changeListener),
@@ -508,6 +524,7 @@ class _$CompanyDao extends CompanyDao {
                   'photo': item.photo,
                   'background': item.background,
                   'chatIntro': item.chatIntro,
+                  'replyTime': item.replyTime,
                   'description': item.description
                 },
             changeListener);
@@ -523,6 +540,7 @@ class _$CompanyDao extends CompanyDao {
       photo: row['photo'] as String,
       background: row['background'] as String,
       chatIntro: row['chatIntro'] as String,
+      replyTime: row['replyTime'] as String,
       description: row['description'] as String);
 
   final InsertionAdapter<Company> _companyInsertionAdapter;
@@ -551,7 +569,7 @@ class _$CompanyDao extends CompanyDao {
   @override
   Future<void> insertCompany(Company company) async {
     await _companyInsertionAdapter.insert(
-        company, sqflite.ConflictAlgorithm.abort);
+        company, sqflite.ConflictAlgorithm.replace);
   }
 
   @override
@@ -563,6 +581,20 @@ class _$CompanyDao extends CompanyDao {
   @override
   Future<void> deleteCompany(Company company) async {
     await _companyDeletionAdapter.delete(company);
+  }
+
+  @override
+  Future<void> replaceCompany(Company company) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceCompany(company);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.companyDao.replaceCompany(company);
+      });
+    }
   }
 }
 

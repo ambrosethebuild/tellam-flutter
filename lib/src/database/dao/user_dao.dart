@@ -12,7 +12,13 @@ abstract class UserDao {
   @Query('SELECT * FROM users LIMIT 1')
   Stream<TellamUser> getCurrentUserStream();
 
-  @insert
+  @transaction
+  Future<void> replaceUser(TellamUser user) async {
+    await deleteAllUsers();
+    await insertUser(user);
+  }
+
+  @Insert(onConflict: OnConflictStrategy.REPLACE)
   Future<void> insertUser(TellamUser user);
 
   @Update(onConflict: OnConflictStrategy.REPLACE)

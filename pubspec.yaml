@@ -19,6 +19,7 @@ dependencies:
   flutter_gradient_colors: ^1.0.0
   flutter_svg: ^0.17.4
   rxdart: ^0.24.1
+  timeago: ^2.0.26
 
 dev_dependencies:
   flutter_test:

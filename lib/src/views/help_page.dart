@@ -7,6 +7,7 @@ import 'package:tellam/src/view_models/tellam_help_view_model.dart';
 import 'package:tellam/src/views/faq_details_page.dart';
 import 'package:tellam/src/views/faq_topic_page.dart';
 import 'package:tellam/src/widgets/chat_banner_tile.dart';
+import 'package:tellam/src/widgets/data_loading_indicator.dart';
 import 'package:tellam/src/widgets/faq_tile.dart';
 import 'package:tellam/src/widgets/header_title_tile.dart';
 import 'package:tellam/src/widgets/page_view_state.dart';
@@ -54,9 +55,7 @@ class _TellamHelpPageState extends State<TellamHelpPage> {
             builder: (context, snapshot) {
               if ((!snapshot.hasData && !snapshot.hasError) ||
                   snapshot.data.length < 1) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return DataLoadingIndicator();
               } else if (snapshot.hasError) {
                 final errorStateDataModel = StateDataModel();
                 errorStateDataModel.iconData = Icons.sms_failed;
@@ -115,9 +114,7 @@ class _TellamHelpPageState extends State<TellamHelpPage> {
             builder: (context, snapshot) {
               if ((!snapshot.hasData && !snapshot.hasError) ||
                   snapshot.data.length < 1) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return DataLoadingIndicator();
               } else if (snapshot.hasError) {
                 final errorStateDataModel = StateDataModel();
                 errorStateDataModel.iconData = Icons.sms_failed;

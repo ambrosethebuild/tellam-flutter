@@ -9,7 +9,13 @@ abstract class CompanyDao {
   @Query('SELECT * FROM companies LIMIT 1')
   Stream<Company> getCurrentCompanyStream();
 
-  @insert
+  @transaction
+  Future<void> replaceCompany(Company company) async {
+    await deleteAllCompanies();
+    await insertCompany(company);
+  }
+
+  @Insert(onConflict: OnConflictStrategy.REPLACE)
   Future<void> insertCompany(Company company);
 
   @Update(onConflict: OnConflictStrategy.REPLACE)
