@@ -75,8 +75,10 @@ class ChatAgentContainer extends StatelessWidget {
                             stream: Tellam.appDatabase.companyDao
                                 .getCurrentCompanyStream(),
                             builder: (context, snapshot) {
+                              final companyName =
+                                  snapshot.hasData ? snapshot.data.name : "";
                               return Text(
-                                snapshot.data.name,
+                                companyName,
                                 style: TellamTextStyles.h4TitleTextStyle(
                                   color: Colors.white,
                                 ),

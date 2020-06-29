@@ -37,22 +37,44 @@ class TellamConversationViewModel {
       (event) {
         //map the agent dynamic list to list of agent model
         List<Agent> mAgents = [];
+        // print("Agents ==> ${event.snapshot.value}");
+        if (event.snapshot.value is List) {
+          (event.snapshot.value as List<dynamic>).forEach(
+            (agentObject) {
+              try {
+                final mAgent = Agent(
+                  id: agentObject["id"],
+                  firstName: agentObject["first_name"],
+                  lastName: agentObject["last_name"],
+                  emailAddress: agentObject["email"],
+                  photo: agentObject["photo"],
+                  phoneNumber: agentObject["phone"],
+                  status: agentObject["status"],
+                );
 
-        (event.snapshot.value as Map<dynamic, dynamic>).forEach(
-          (key, agentObject) {
-            final mAgent = Agent(
-              id: agentObject["id"],
-              firstName: agentObject["first_name"],
-              lastName: agentObject["last_name"],
-              emailAddress: agentObject["email"],
-              photo: agentObject["photo"],
-              phoneNumber: agentObject["phone"],
-              status: agentObject["status"],
-            );
+                mAgents.add(mAgent);
+              } catch (error) {
+                print("Error getting agents");
+              }
+            },
+          );
+        } else if (event.snapshot.value is Map<dynamic, dynamic>) {
+          (event.snapshot.value as Map<dynamic, dynamic>).forEach(
+            (key, agentObject) {
+              final mAgent = Agent(
+                id: agentObject["id"],
+                firstName: agentObject["first_name"],
+                lastName: agentObject["last_name"],
+                emailAddress: agentObject["email"],
+                photo: agentObject["photo"],
+                phoneNumber: agentObject["phone"],
+                status: agentObject["status"],
+              );
 
-            mAgents.add(mAgent);
-          },
-        );
+              mAgents.add(mAgent);
+            },
+          );
+        }
 
         _agents.add(mAgents);
       },

@@ -1,9 +1,6 @@
-import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:tellam/src/database/models/agent.dart';
 import 'package:tellam/src/database/models/conversation.dart';
 import 'package:tellam/src/database/models/message.dart';
-import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/src/utils/date_time_utils.dart';
 import 'package:tellam/src/view_models/tellam_chat_view_model.dart';
 import 'package:tellam/src/widgets/agent_message_title.dart';
@@ -11,9 +8,7 @@ import 'package:tellam/src/widgets/chat_agent_container.dart';
 import 'package:tellam/src/widgets/chat_appbar.dart';
 import 'package:tellam/src/widgets/chat_message_input_action.dart';
 import 'package:tellam/src/widgets/message_date_tile.dart';
-import 'package:tellam/src/widgets/oval_image.dart';
 import 'package:tellam/src/widgets/user_message_title.dart';
-import 'package:tellam/tellam.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({
@@ -68,7 +63,10 @@ class _ChatPageState extends State<ChatPage> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: (!widget.conversation.isClosed) ? 100 : 0,
+            bottom:
+                (widget.conversation != null && !widget.conversation.isClosed)
+                    ? 100
+                    : 0,
             top: 80,
             child: StreamBuilder<List<Message>>(
                 stream: _chatViewModel.messages,
@@ -142,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
             bottom: 0,
             child:
                 //Hide the message entry box if conversation has close
-                (!widget.conversation.isClosed)
+                (widget.conversation == null || !widget.conversation.isClosed)
                     ? Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 20,

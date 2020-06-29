@@ -37,9 +37,15 @@ class ChatViewModel {
     _messages.close();
     _agent.close();
     chatsScrollController.dispose();
-    chatQuery.cancel();
-    conversationAgentIdQuery.cancel();
-    agentQuery.cancel();
+    if (chatQuery != null) {
+      chatQuery.cancel();
+    }
+    if (conversationAgentIdQuery != null) {
+      conversationAgentIdQuery.cancel();
+    }
+    if (agentQuery != null) {
+      agentQuery.cancel();
+    }
   }
 
   void startChatListening() async {

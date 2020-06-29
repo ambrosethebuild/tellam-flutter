@@ -54,7 +54,11 @@ class _ConversationPageState extends State<ConversationPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: GradientColors.teal,
+                      colors: [
+                            Tellam.uiConfiguration.primaryColor,
+                            Tellam.uiConfiguration.primaryDarkColor
+                          ] ??
+                          GradientColors.teal,
                     ),
                   ),
                 );
@@ -143,17 +147,18 @@ class _ConversationPageState extends State<ConversationPage> {
                         height: 10,
                       ),
                       StreamBuilder<Company>(
-                          stream: Tellam.appDatabase.companyDao
-                              .getCurrentCompanyStream(),
-                          builder: (context, snapshot) {
-                            final replyTime = (snapshot.hasData)
-                                ? snapshot.data.replyTime
-                                : "Typically replies in a few hours";
-                            return Text(
-                              replyTime,
-                              style: TellamTextStyles.h6TitleTextStyle(),
-                            );
-                          }),
+                        stream: Tellam.appDatabase.companyDao
+                            .getCurrentCompanyStream(),
+                        builder: (context, snapshot) {
+                          final replyTime = (snapshot.hasData)
+                              ? snapshot.data.replyTime
+                              : "Typically replies in a few hours";
+                          return Text(
+                            replyTime,
+                            style: TellamTextStyles.h6TitleTextStyle(),
+                          );
+                        },
+                      ),
 
                       //company agents
                       SizedBox(
