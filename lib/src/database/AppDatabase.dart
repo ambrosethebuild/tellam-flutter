@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:floor/floor.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:tellam/src/database/dao/company_dao.dart';
 import 'package:tellam/src/database/dao/data_update_dao.dart';
 import 'package:tellam/src/database/dao/faq_dao.dart';
