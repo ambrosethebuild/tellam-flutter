@@ -1,11 +1,13 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:tellam/src/database/models/agent.dart';
 import 'package:tellam/src/database/models/conversation.dart';
 import 'package:tellam/src/database/models/message.dart';
 import 'package:tellam/src/utils/app_text_styles.dart';
 import 'package:tellam/src/utils/date_time_utils.dart';
 import 'package:tellam/src/view_models/tellam_chat_view_model.dart';
 import 'package:tellam/src/widgets/agent_message_title.dart';
+import 'package:tellam/src/widgets/chat_agent_container.dart';
 import 'package:tellam/src/widgets/chat_appbar.dart';
 import 'package:tellam/src/widgets/chat_message_input_action.dart';
 import 'package:tellam/src/widgets/message_date_tile.dart';
@@ -35,7 +37,13 @@ class _ChatPageState extends State<ChatPage> {
 
     //setting the conversation model to be used in the messaging
     _chatViewModel.conversation = widget.conversation;
-    _chatViewModel.startChatListening();
+    _chatViewModel.init();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _chatViewModel.dispose();
   }
 
   @override
@@ -52,66 +60,15 @@ class _ChatPageState extends State<ChatPage> {
             right: 0,
             top: 0,
             height: 80,
-            child: Container(
-              color: Tellam.uiConfiguration.primaryDarkColor,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  //close chat button
-                  ButtonTheme(
-                    minWidth: 30,
-                    height: 30,
-                    padding: EdgeInsets.all(0),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  //agent profile photo
-                  OvalImage(
-                    url: "",
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        "snapTask",
-                        style: TellamTextStyles.h4TitleTextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "Typically replies with a day",
-                        style: TellamTextStyles.h6TitleTextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            child: ChatAgentContainer(
+              chatViewModel: _chatViewModel,
             ),
           ),
           //messages listview
           Positioned(
             left: 0,
             right: 0,
-            bottom: 100,
+            bottom: (!widget.conversation.isClosed) ? 100 : 0,
             top: 80,
             child: StreamBuilder<List<Message>>(
                 stream: _chatViewModel.messages,

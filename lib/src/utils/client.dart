@@ -35,8 +35,8 @@ class Client {
     return success;
   }
 
-  //delete data to sharedprefrence
-  Future<bool> delete() async {
+  //delete data from database
+  Future<bool> logout() async {
     bool success;
     try {
       Tellam.appDatabase.userDao.deleteAllUsers();

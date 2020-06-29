@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tellam/src/database/models/agent.dart';
 import 'package:tellam/src/database/models/conversation.dart';
 import 'package:tellam/src/database/models/message.dart';
 import 'package:tellam/tellam.dart';
@@ -12,21 +16,36 @@ class ChatViewModel {
 
 //behaviour subjects
   var _messages = BehaviorSubject<List<Message>>();
+  var _agent = BehaviorSubject<Agent>();
+  StreamSubscription<Event> chatQuery;
+  StreamSubscription<Event> conversationAgentIdQuery;
+  StreamSubscription<Event> agentQuery;
 
   //conversation model
   Conversation conversation;
   String newMessage;
   //stream getters
   Stream<List<Message>> get messages => _messages.stream;
+  Stream<Agent> get agent => _agent.stream;
+
+  void init() {
+    startChatListening();
+    startConversationAgentAssignmentListening();
+  }
 
   void dispose() {
     _messages.close();
+    _agent.close();
+    chatsScrollController.dispose();
+    chatQuery.cancel();
+    conversationAgentIdQuery.cancel();
+    agentQuery.cancel();
   }
 
   void startChatListening() async {
     //check if there was an existing conversation model
     if (conversation != null) {
-      Tellam.tellamDatabaseReference
+      chatQuery = Tellam.tellamDatabaseReference
           .child("chats")
           .child(conversation.key)
           .child("messages")
@@ -47,13 +66,68 @@ class ChatViewModel {
           _messages.add(mMessagesList);
 
           //scroll to last message
-          chatsScrollController.jumpTo(
-            // chatsScrollController.position.maxScrollExtent,
-            chatsScrollController.position.maxScrollExtent,
-          );
+          _scrollToBottom();
         },
         onError: (error) {
           print("Error Getting New Messages ==> $error");
+        },
+      );
+    } else {
+      print("Conversation not started yet");
+    }
+  }
+
+  void startConversationAgentAssignmentListening() async {
+    //check if there was an existing conversation model
+    if (conversation != null) {
+      conversationAgentIdQuery = Tellam.tellamDatabaseReference
+          .child("chats")
+          .child(conversation.key)
+          .child("agent_id")
+          .onValue
+          .listen(
+        (event) {
+          //agent id details
+          if (event.snapshot.value != null) {
+            conversation.agentId = event.snapshot.value;
+            startConversationAgentListening();
+          } else {
+            _agent.add(null);
+          }
+        },
+        onError: (error) {
+          print("Error Getting New Messages ==> $error");
+        },
+      );
+    } else {
+      print("Conversation not started yet");
+    }
+  }
+
+  void startConversationAgentListening() async {
+    //check if there was an existing conversation model
+    if (conversation != null) {
+      agentQuery = Tellam.tellamDatabaseReference
+          .child("agents")
+          .child("${conversation.agentId}")
+          .onValue
+          .listen(
+        (event) {
+          //agent details
+          final agentObject = event.snapshot.value;
+          final mAgent = Agent(
+            id: agentObject["id"],
+            firstName: agentObject["first_name"],
+            lastName: agentObject["last_name"],
+            emailAddress: agentObject["email"],
+            photo: agentObject["photo"],
+            phoneNumber: agentObject["phone"],
+            status: agentObject["status"],
+          );
+          _agent.add(mAgent);
+        },
+        onError: (error) {
+          print("Error Getting Agent Object ==> $error");
         },
       );
     } else {
@@ -70,7 +144,6 @@ class ChatViewModel {
     }
 
     if (newMessage.isNotEmpty) {
-      print("Sending Message");
       if (conversation != null) {
         //saving the message
         Tellam.tellamDatabaseReference
@@ -99,7 +172,6 @@ class ChatViewModel {
         } else {
           print("Fail to create new conversation");
         }
-        ;
       }
     } else {
       print("Empty message");
@@ -146,10 +218,22 @@ class ChatViewModel {
 
       //start listening to the newly created conversation
       startChatListening();
+      startConversationAgentAssignmentListening();
     }
 
     //return operation status
     return success;
+  }
+
+  void _scrollToBottom() async {
+    await Future.delayed(
+      Duration(
+        milliseconds: 500,
+      ),
+    );
+    chatsScrollController.jumpTo(
+      chatsScrollController.position.maxScrollExtent,
+    );
   }
 
   //
