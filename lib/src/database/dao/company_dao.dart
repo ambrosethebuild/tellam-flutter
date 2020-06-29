@@ -15,10 +15,10 @@ abstract class CompanyDao {
     await insertCompany(company);
   }
 
-  @Insert(onConflict: OnConflictStrategy.REPLACE)
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertCompany(Company company);
 
-  @Update(onConflict: OnConflictStrategy.REPLACE)
+  @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateCompany(Company company);
 
   @delete

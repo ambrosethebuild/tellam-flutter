@@ -10,10 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  floor: ^0.12.0
+  floor: ^0.13.0
   flutter_icons: ^1.0.0+1
   cached_network_image: ^2.2.0+1
-  flutter_html: ^0.8.2
+  flutter_html: ^1.0.0
   firebase_database: ^3.1.6
   url_launcher: ^5.4.11
   flutter_gradient_colors: ^1.0.0
@@ -26,7 +26,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  floor_generator: ^0.12.0
+  floor_generator: ^0.13.0
   build_runner: ^1.7.3
 
 

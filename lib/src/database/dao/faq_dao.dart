@@ -30,7 +30,7 @@ abstract class FAQDao {
   @insert
   Future<List<int>> insertFAQs(List<FAQ> faqs);
 
-  @Update(onConflict: OnConflictStrategy.REPLACE)
+  @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateFAQ(FAQ faq);
 
   @delete

@@ -24,7 +24,7 @@ abstract class FAQTopicDao {
   @insert
   Future<List<int>> insertFAQTopics(List<FAQTopic> faqTopics);
 
-  @Update(onConflict: OnConflictStrategy.REPLACE)
+  @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateFAQTopic(FAQTopic faqTopic);
 
   @delete

@@ -18,10 +18,10 @@ abstract class UserDao {
     await insertUser(user);
   }
 
-  @Insert(onConflict: OnConflictStrategy.REPLACE)
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertUser(TellamUser user);
 
-  @Update(onConflict: OnConflictStrategy.REPLACE)
+  @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateUser(TellamUser user);
 
   @delete

@@ -43,7 +43,7 @@ class _$AppDatabaseBuilder {
   /// Creates the database and initializes it.
   Future<AppDatabase> build() async {
     final path = name != null
-        ? join(await sqflite.getDatabasesPath(), name)
+        ? await sqfliteDatabaseFactory.getDatabasePath(name)
         : ':memory:';
     final database = _$AppDatabase();
     database.database = await database.open(
@@ -72,8 +72,7 @@ class _$AppDatabase extends AppDatabase {
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
-    return sqflite.openDatabase(
-      path,
+    final databaseOptions = sqflite.OpenDatabaseOptions(
       version: 1,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
@@ -102,6 +101,7 @@ class _$AppDatabase extends AppDatabase {
         await callback?.onCreate?.call(database, version);
       },
     );
+    return sqfliteDatabaseFactory.openDatabase(path, options: databaseOptions);
   }
 
   @override
@@ -201,13 +201,16 @@ class _$UserDao extends UserDao {
   @override
   Stream<TellamUser> findUserById(int id) {
     return _queryAdapter.queryStream('SELECT * FROM users WHERE id = ?',
-        arguments: <dynamic>[id], tableName: 'users', mapper: _usersMapper);
+        arguments: <dynamic>[id],
+        queryableName: 'users',
+        isView: false,
+        mapper: _usersMapper);
   }
 
   @override
   Stream<TellamUser> getCurrentUserStream() {
     return _queryAdapter.queryStream('SELECT * FROM users LIMIT 1',
-        tableName: 'users', mapper: _usersMapper);
+        queryableName: 'users', isView: false, mapper: _usersMapper);
   }
 
   @override
@@ -217,14 +220,12 @@ class _$UserDao extends UserDao {
 
   @override
   Future<void> insertUser(TellamUser user) async {
-    await _tellamUserInsertionAdapter.insert(
-        user, sqflite.ConflictAlgorithm.replace);
+    await _tellamUserInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> updateUser(TellamUser user) async {
-    await _tellamUserUpdateAdapter.update(
-        user, sqflite.ConflictAlgorithm.replace);
+    await _tellamUserUpdateAdapter.update(user, OnConflictStrategy.replace);
   }
 
   @override
@@ -310,26 +311,33 @@ class _$FAQDao extends FAQDao {
   @override
   Stream<FAQ> findById(int id) {
     return _queryAdapter.queryStream('SELECT * FROM faqs WHERE id = ?',
-        arguments: <dynamic>[id], tableName: 'faqs', mapper: _faqsMapper);
+        arguments: <dynamic>[id],
+        queryableName: 'faqs',
+        isView: false,
+        mapper: _faqsMapper);
   }
 
   @override
   Stream<List<FAQ>> findByTopicId(int topicId) {
     return _queryAdapter.queryListStream('SELECT * FROM faqs WHERE topicId = ?',
-        arguments: <dynamic>[topicId], tableName: 'faqs', mapper: _faqsMapper);
+        arguments: <dynamic>[topicId],
+        queryableName: 'faqs',
+        isView: false,
+        mapper: _faqsMapper);
   }
 
   @override
   Stream<List<FAQ>> findAllStream() {
     return _queryAdapter.queryListStream('SELECT * FROM faqs ORDER BY id DESC',
-        tableName: 'faqs', mapper: _faqsMapper);
+        queryableName: 'faqs', isView: false, mapper: _faqsMapper);
   }
 
   @override
   Stream<List<FAQ>> findPopularStream() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM faqs ORDER BY id DESC LIMIT 4',
-        tableName: 'faqs',
+        queryableName: 'faqs',
+        isView: false,
         mapper: _faqsMapper);
   }
 
@@ -340,18 +348,18 @@ class _$FAQDao extends FAQDao {
 
   @override
   Future<void> insertFAQ(FAQ faq) async {
-    await _fAQInsertionAdapter.insert(faq, sqflite.ConflictAlgorithm.abort);
+    await _fAQInsertionAdapter.insert(faq, OnConflictStrategy.abort);
   }
 
   @override
   Future<List<int>> insertFAQs(List<FAQ> faqs) {
     return _fAQInsertionAdapter.insertListAndReturnIds(
-        faqs, sqflite.ConflictAlgorithm.abort);
+        faqs, OnConflictStrategy.abort);
   }
 
   @override
   Future<void> updateFAQ(FAQ faq) async {
-    await _fAQUpdateAdapter.update(faq, sqflite.ConflictAlgorithm.replace);
+    await _fAQUpdateAdapter.update(faq, OnConflictStrategy.replace);
   }
 
   @override
@@ -432,7 +440,8 @@ class _$FAQTopicDao extends FAQTopicDao {
   Stream<FAQTopic> findById(int id) {
     return _queryAdapter.queryStream('SELECT * FROM faq_topics WHERE id = ?',
         arguments: <dynamic>[id],
-        tableName: 'faq_topics',
+        queryableName: 'faq_topics',
+        isView: false,
         mapper: _faq_topicsMapper);
   }
 
@@ -440,7 +449,8 @@ class _$FAQTopicDao extends FAQTopicDao {
   Stream<List<FAQTopic>> findAllStream() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM faq_topics ORDER BY id DESC',
-        tableName: 'faq_topics',
+        queryableName: 'faq_topics',
+        isView: false,
         mapper: _faq_topicsMapper);
   }
 
@@ -451,20 +461,18 @@ class _$FAQTopicDao extends FAQTopicDao {
 
   @override
   Future<void> insertFAQTopic(FAQTopic faqTopic) async {
-    await _fAQTopicInsertionAdapter.insert(
-        faqTopic, sqflite.ConflictAlgorithm.abort);
+    await _fAQTopicInsertionAdapter.insert(faqTopic, OnConflictStrategy.abort);
   }
 
   @override
   Future<List<int>> insertFAQTopics(List<FAQTopic> faqTopics) {
     return _fAQTopicInsertionAdapter.insertListAndReturnIds(
-        faqTopics, sqflite.ConflictAlgorithm.abort);
+        faqTopics, OnConflictStrategy.abort);
   }
 
   @override
   Future<void> updateFAQTopic(FAQTopic faqTopic) async {
-    await _fAQTopicUpdateAdapter.update(
-        faqTopic, sqflite.ConflictAlgorithm.replace);
+    await _fAQTopicUpdateAdapter.update(faqTopic, OnConflictStrategy.replace);
   }
 
   @override
@@ -558,7 +566,7 @@ class _$CompanyDao extends CompanyDao {
   @override
   Stream<Company> getCurrentCompanyStream() {
     return _queryAdapter.queryStream('SELECT * FROM companies LIMIT 1',
-        tableName: 'companies', mapper: _companiesMapper);
+        queryableName: 'companies', isView: false, mapper: _companiesMapper);
   }
 
   @override
@@ -568,14 +576,12 @@ class _$CompanyDao extends CompanyDao {
 
   @override
   Future<void> insertCompany(Company company) async {
-    await _companyInsertionAdapter.insert(
-        company, sqflite.ConflictAlgorithm.replace);
+    await _companyInsertionAdapter.insert(company, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> updateCompany(Company company) async {
-    await _companyUpdateAdapter.update(
-        company, sqflite.ConflictAlgorithm.replace);
+    await _companyUpdateAdapter.update(company, OnConflictStrategy.replace);
   }
 
   @override
@@ -663,14 +669,18 @@ class _$DataUpdateDao extends DataUpdateDao {
   @override
   Stream<DataUpdate> findById(int id) {
     return _queryAdapter.queryStream('SELECT * FROM updates WHERE id = ?',
-        arguments: <dynamic>[id], tableName: 'updates', mapper: _updatesMapper);
+        arguments: <dynamic>[id],
+        queryableName: 'updates',
+        isView: false,
+        mapper: _updatesMapper);
   }
 
   @override
   Stream<List<DataUpdate>> findAllStream() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM updates ORDER BY id DESC',
-        tableName: 'updates',
+        queryableName: 'updates',
+        isView: false,
         mapper: _updatesMapper);
   }
 
@@ -682,13 +692,13 @@ class _$DataUpdateDao extends DataUpdateDao {
   @override
   Future<void> insertDataUpdate(DataUpdate dataUpdate) async {
     await _dataUpdateInsertionAdapter.insert(
-        dataUpdate, sqflite.ConflictAlgorithm.abort);
+        dataUpdate, OnConflictStrategy.abort);
   }
 
   @override
   Future<void> updateDataUpdate(DataUpdate dataUpdate) async {
     await _dataUpdateUpdateAdapter.update(
-        dataUpdate, sqflite.ConflictAlgorithm.replace);
+        dataUpdate, OnConflictStrategy.replace);
   }
 
   @override

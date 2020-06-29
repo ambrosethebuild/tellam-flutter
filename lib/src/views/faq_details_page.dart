@@ -37,8 +37,7 @@ class _FAQDetailsPageState extends State<FAQDetailsPage> {
           ),
           Html(
             data: widget.faq.body,
-            defaultTextStyle: TellamTextStyles.h5TitleTextStyle(),
-            renderNewlines: true,
+            shrinkWrap: true,
             onLinkTap: (url) async {
               print("Opening $url...");
               if (await canLaunch(url)) {

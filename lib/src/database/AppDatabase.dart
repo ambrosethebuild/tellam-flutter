@@ -10,6 +10,7 @@ import 'package:tellam/src/database/models/data_update.dart';
 import 'package:tellam/src/database/models/faq.dart';
 import 'package:tellam/src/database/models/faq_topic.dart';
 import 'package:tellam/src/database/models/tellam_user.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
 
 part 'AppDatabase.g.dart'; // the generated code will be there
 

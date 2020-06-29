@@ -18,7 +18,7 @@ abstract class DataUpdateDao {
   @insert
   Future<void> insertDataUpdate(DataUpdate dataUpdate);
 
-  @Update(onConflict: OnConflictStrategy.REPLACE)
+  @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateDataUpdate(DataUpdate dataUpdate);
 
   @delete

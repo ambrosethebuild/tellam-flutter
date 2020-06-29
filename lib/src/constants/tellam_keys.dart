@@ -1,5 +1,4 @@
 class TellamKeys {
-  
   //User data keys
   static const userId = 'id';
   static const userFirstName = 'first_name';
@@ -11,6 +10,4 @@ class TellamKeys {
   //connfigurationn keys
   static const secretKey = 'secret_key';
   static const databaseUrl = 'database_url';
-
-
 }

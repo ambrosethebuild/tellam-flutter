@@ -1,4 +1,4 @@
-package com.tellam.example
+package com.example.tellam
 
 import io.flutter.embedding.android.FlutterActivity
 
