@@ -29,6 +29,9 @@ class _FAQTopicPageState extends State<FAQTopicPage> {
         stream:
             Tellam.appDatabase.faqDao.findByTopicId(widget.faqTopic.topicId),
         builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.hasError) {
+            return SizedBox();
+          }
           return ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
