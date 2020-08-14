@@ -1,6 +1,6 @@
 name: tellam
 description: Tellam flutter package to integrate FAQ and live support chat using firebase.
-version: 0.1.1
+version: 0.1.2
 author: Ambrose Bako<bakoambrose@gmail.com>
 homepage: https://github.com/ambrosethebuild/tellam-flutter
 
@@ -16,9 +16,9 @@ dependencies:
   cached_network_image: ^2.2.0+1
   flutter_html: ^1.0.0
   firebase_database: ^3.1.6
-  url_launcher: ^5.4.11
+  url_launcher: ^5.5.0
   flutter_gradient_colors: ^1.0.0
-  flutter_svg: ^0.17.4
+  flutter_svg: ^0.18.0
   rxdart: ^0.24.1
   timeago: ^2.0.26
   bubble: ^1.1.9+1

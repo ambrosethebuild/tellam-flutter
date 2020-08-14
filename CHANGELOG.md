@@ -5,3 +5,7 @@
 ## [0.1.1] - 2020-06-30
 
 * Updated dependencies
+
+## [0.1.2] - 2020-08-14
+
+* Updated dependencies
