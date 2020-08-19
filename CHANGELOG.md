@@ -13,3 +13,7 @@
 ## [0.1.3] - 2020-08-14
 
 * Fixed exception during faq-topis lisitng
+
+## [0.1.4] - 2020-08-19
+
+* Updated dependencies
